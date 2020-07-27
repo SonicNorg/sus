@@ -1,0 +1,8 @@
+service:
+  sus:
+    db:
+      username: SUS
+      password: 1qaz2wsx
+      url: jdbc:oracle:thin:@pttb.ru:1521/osadb.oracle.com
+      schema: SUS
+      pool: 50

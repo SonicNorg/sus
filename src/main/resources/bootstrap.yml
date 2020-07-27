@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: sus
+  cloud:
+    consul:
+      enabled: true
+      host: ${consul.host:localhost}
+      port: ${consul.port:8500}
+      config:
+        enabled: true
+        format: yaml
+      discovery:
+        prefer-ip-address: true
+        heartbeat:
+          enabled: true
+        instance-id: ${spring.application.name}-${spring.cloud.client.hostname}-${server.port}
+        health-check-critical-timeout: 5000m
+        health-check-interval: 30s
+        health-check-timeout: 5s

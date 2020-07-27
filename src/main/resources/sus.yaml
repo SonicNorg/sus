@@ -1,0 +1,74 @@
+openapi: 3.0.1
+info:
+  title: Status Update Service
+  description: Сервис обновляет статус по переданному ЛС
+    кабинета.
+  version: 1.0.0
+  x-product-version: v1
+  x-backend:
+    name: SUS
+    min-nodes: 1
+paths:
+  /updatestatus:
+    get:
+      description: Обновляет статус по ЛС
+      operationId: updateStatus
+      parameters:
+        - in: query
+          name: accountId
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: status
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: msisdn
+          schema:
+            type: string
+          required: false
+      responses:
+        200:
+          description: Успешно выполнено
+        400:
+          description: Не удалось найти запись с заданным ЛС
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Внутренняя ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    ErrorCode:
+      type: integer
+      enum:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+      description: >
+        Код ошибки:
+        * 1 - Ошибка доступа к БД
+        * 2 - Неизвестная ошибка сервиса (неперехваченные исключения)
+        * 3 - Не удалось найти запись с заданным ЛС
+        * 4 - Зарезервирован
+        * 5 - Зарезервирован
+    Error:
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/ErrorCode'
+        message:
+          type: string
+          example: "IllegalStateException: что-то пошло не так"
+      required:
+        - code
+        - message

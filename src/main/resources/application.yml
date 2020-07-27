@@ -1,0 +1,36 @@
+server:
+  port: 8991
+  address: 0.0.0.0
+spring:
+  profiles:
+    active: dev
+  application:
+    name: sus
+  jackson:
+    default-property-inclusion: NON_EMPTY
+    serialization:
+      indent_output: ${app.api.pretty_print:false}
+      write_dates_as_timestamps: false
+    date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
+    deserialization:
+      adjust_dates_to_context_time_zone: false
+      fail_on_unknown_properties: false
+  cloud:
+    consul:
+      discovery:
+        health-check-path: /actuator/health
+  datasource:
+    username: ${service.sus.db.username}
+    password: ${service.sus.db.password}
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: ${service.sus.db.url}
+  flyway:
+    enabled: true
+    user: ${service.sus.db.username}
+    password: ${service.sus.db.password}
+    url: ${service.sus.db.url}
+    schemas: ${service.sus.db.schema}
+info:
+  app:
+    name: ${spring.application.name}
+    version: ${app.version}
