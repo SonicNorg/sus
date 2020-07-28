@@ -30,6 +30,11 @@ spring:
     password: ${service.sus.db.password}
     url: ${service.sus.db.url}
     schemas: ${service.sus.db.schema}
+  rabbitmq:
+    host: ${service.sus.rabbit.host}
+    port: ${service.sus.rabbit.port}
+    username: ${service.sus.rabbit.username}
+    password: ${service.sus.rabbit.password}
 info:
   app:
     name: ${spring.application.name}

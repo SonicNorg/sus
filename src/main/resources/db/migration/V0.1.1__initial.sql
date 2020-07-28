@@ -1,7 +1,8 @@
 CREATE TABLE LSMSISDN (
 id number not null constraint lsmsisdn_pk primary key,
 msisdn varchar(10) not null constraint msisdn_uc unique,
-accountId varchar(8) not null constraint accountId_uc unique
+accountId varchar(8) not null constraint accountId_uc unique,
+status varchar(255) not null
 );
 
 create sequence

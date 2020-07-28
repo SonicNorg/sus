@@ -13,6 +13,8 @@ paths:
     get:
       description: Обновляет статус по ЛС
       operationId: updateStatus
+      tags:
+        - sus
       parameters:
         - in: query
           name: accountId
@@ -37,13 +39,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorResponse'
         500:
           description: Внутренняя ошибка
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     ErrorCode:
@@ -61,7 +63,7 @@ components:
         * 3 - Не удалось найти запись с заданным ЛС
         * 4 - Зарезервирован
         * 5 - Зарезервирован
-    Error:
+    ErrorResponse:
       type: object
       properties:
         code:

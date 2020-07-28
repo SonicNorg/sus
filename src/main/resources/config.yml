@@ -6,3 +6,14 @@ service:
       url: jdbc:oracle:thin:@pttb.ru:1521/osadb.oracle.com
       schema: SUS
       pool: 50
+    rabbit:
+      host: nepavel.name
+      port: 5672
+      username: admin
+      password: traTaTaV3zem-k0ta
+      queueIn: SUS.IN
+      queueOut: SUS.OUT
+      exchangeIn: SUS.IN_exchange
+      exchangeOut: SUS.OUT_exchange
+      routingKeyIn: toSusIn
+      routingKeyOut: toSusOut
