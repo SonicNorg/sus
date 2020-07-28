@@ -1,0 +1,82 @@
+openapi: 3.0.1
+info:
+  title: InMemoryDataBase
+  description: Сервис возвращает MSISDN + ЛС по ЛС из БД Tarantool
+  version: 1.0.0
+  x-product-version: v1
+  x-backend:
+    name: IMDB
+    min-nodes: 1
+paths:
+  /enrich:
+    get:
+      description: Возвращает MSISDN + ЛС по ЛС
+      operationId: enrich
+      tags:
+        - imdb
+      parameters:
+        - in: query
+          name: accountId
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Успешно выполнено
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/EnrichResponse'
+                  - $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Внутренняя ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    EnrichResponse:
+      type: object
+      description: Содержит запрошенный ЛС и соответствующий ему msisdn, если он найден. Если не найден, msisdn будет пуст.
+      properties:
+        msisdn:
+          type: string
+          pattern: '^\d{11,15}$'
+          description: Номер абонента. В соответствии с E.164, может достигать 15 знаков, содержит только цифры. Включает код страны (CC).
+          example: 3809130125566
+        accountId:
+          type: string
+      required:
+        - accountId
+    ErrorCode:
+      type: integer
+      enum:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+      description: >
+        Код ошибки:
+        * 1 - Ошибка доступа к БД
+        * 2 - Неизвестная ошибка сервиса (неперехваченные исключения)
+        * 3 - Зарезервирован
+        * 4 - Зарезервирован
+        * 5 - Зарезервирован
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/ErrorCode'
+        message:
+          type: string
+          example: "IllegalStateException: что-то пошло не так"
+      required:
+        - code
+        - message
+    OneOfEnrichResponseErrorResponse:
+      oneOf:
+        - $ref: '#/components/schemas/EnrichResponse'
+        - $ref: '#/components/schemas/ErrorResponse'

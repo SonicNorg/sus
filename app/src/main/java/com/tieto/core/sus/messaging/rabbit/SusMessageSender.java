@@ -18,6 +18,6 @@ public class SusMessageSender {
     }
 
     public void sendMessage(MessageEntity messageEntity) {
-        this.rabbitTemplate.convertAndSend(rabbitConfig.getExchangeOut(), messageEntity);
+        this.rabbitTemplate.convertAndSend(rabbitConfig.getExchangeOut(), rabbitConfig.getRoutingKeyOut(), messageEntity);
     }
 }

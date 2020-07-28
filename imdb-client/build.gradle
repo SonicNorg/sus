@@ -1,0 +1,46 @@
+plugins {
+    id 'java'
+    id "org.openapi.generator" version "4.3.1"
+}
+
+group 'com.tieto.core'
+version '0.0.1-SNAPSHOT'
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework:spring-core:5.2.8.RELEASE'
+    implementation 'org.springframework:spring-web:5.2.8.RELEASE'
+    implementation 'org.springframework:spring-webmvc:5.2.8.RELEASE'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:2.2.3.RELEASE'
+    compile group: 'javax.validation', name: 'validation-api', version: '2.0.0.Final'
+    compile group: 'org.openapitools', name: 'jackson-databind-nullable', version: '0.2.1'
+    compile group: 'io.swagger', name: 'swagger-annotations', version: '1.6.2'
+
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ["$buildDir/generated/src/main/java"]
+        }
+    }
+}
+
+compileJava.dependsOn tasks.openApiGenerate
+
+openApiGenerate {
+    generatorName = "spring"
+    inputSpec = "$projectDir/src/main/resources/imdb.yaml".toString()
+    outputDir = "$buildDir/generated".toString()
+    apiPackage = "com.tieto.core.imdb.api"
+    invokerPackage = "com.tieto.core.imdb"
+    modelPackage = "com.tieto.core.imdb.model"
+    configOptions = [
+            dateLibrary: "java8",
+            library: "spring-cloud"
+    ]
+}

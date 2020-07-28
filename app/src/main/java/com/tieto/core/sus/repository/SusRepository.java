@@ -17,7 +17,7 @@ public class SusRepository {
 
     private static final String select_by_accountid_query = "SELECT * FROM LSMSISDN WHERE ACCOUNTID = ?";
     private static final String select_by_accountid_and_msisdn_query = "SELECT * FROM LSMSISDN WHERE ACCOUNTID = ? AND MSISDN = ?";
-    private static final String update_query = "UPDATE LSMSISDN SET STATUS = ? WHERE ACCOUNTID = ?";
+    private static final String update_query = "UPDATE LSMSISDN SET STATUS = ?, MSISDN = ? WHERE ACCOUNTID = ?";
 
     @Autowired
     public SusRepository(JdbcTemplate jdbcTemplate) {
@@ -36,8 +36,8 @@ public class SusRepository {
         return result.isEmpty() ? null : result.get(0);
     }
 
-    public int updateDataEntity(String accountId, String status) throws DataAccessException {
-        return jdbcTemplate.update(update_query, accountId, status);
+    public int updateDataEntity(String accountId, String status, String msisdn) throws DataAccessException {
+        return jdbcTemplate.update(update_query, status, msisdn, accountId);
     }
 
 
