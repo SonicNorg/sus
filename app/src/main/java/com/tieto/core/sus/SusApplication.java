@@ -1,6 +1,6 @@
 package com.tieto.core.sus;
 
-import com.tieto.core.imdb.api.ImdbApiClient;
+import com.tieto.core.sus.client.ImdbFeignClient;
 import com.tieto.core.sus.config.RabbitConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,11 +15,11 @@ import org.springframework.retry.annotation.EnableRetry;
 @EnableRetry
 @EnableConfigurationProperties
 @Import(RabbitConfig.class)
-@EnableFeignClients(clients = ImdbApiClient.class)
+@EnableFeignClients(clients = ImdbFeignClient.class)
 public class SusApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SusApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SusApplication.class, args);
+    }
 
 }

@@ -1,7 +1,7 @@
 package com.tieto.core.sus.service.impl;
 
-import com.tieto.core.imdb.api.ImdbApiClient;
 import com.tieto.core.imdb.model.OneOfEnrichResponseErrorResponse;
+import com.tieto.core.sus.client.ImdbFeignClient;
 import com.tieto.core.sus.model.DataEntity;
 import com.tieto.core.sus.repository.SusRepository;
 import com.tieto.core.sus.service.SusService;
@@ -16,19 +16,19 @@ import javax.validation.constraints.NotNull;
 @Service
 public class SusServiceImpl implements SusService {
     private final SusRepository susRepository;
-    private final ImdbApiClient imdbApiClient;
+    private final ImdbFeignClient imdbFeignClient;
 
     @Autowired
-    public SusServiceImpl(SusRepository susRepository, ImdbApiClient imdbApiClient) {
+    public SusServiceImpl(SusRepository susRepository, ImdbFeignClient imdbFeignClient) {
         this.susRepository = susRepository;
-        this.imdbApiClient = imdbApiClient;
+        this.imdbFeignClient = imdbFeignClient;
     }
 
     @Override
     public DataEntity updateStatus(@NotNull String accountId, @NotNull String status, @Nullable String msisdn) {
         DataEntity entity = getDataEntity(accountId, msisdn);
         if (entity == null) {
-            ResponseEntity<OneOfEnrichResponseErrorResponse> responseEntity = imdbApiClient.enrich(accountId);
+            ResponseEntity<OneOfEnrichResponseErrorResponse> responseEntity = imdbFeignClient.enrich(accountId);
             if (responseEntity.getStatusCode() != HttpStatus.OK) {
                 throw new RuntimeException(responseEntity.getBody() == null ? "Неизвестная ошибка InMemoryDatabase"
                         : responseEntity.getBody().getMessage());
