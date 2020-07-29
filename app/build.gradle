@@ -9,6 +9,7 @@ plugins {
 group 'com.tieto.core.sus'
 version '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
+project.archivesBaseName = 'sus'
 
 configurations {
     compileOnly {
@@ -65,6 +66,16 @@ test {
 
 jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: [
+                            'com/tieto/core/sus/model/**',
+                            'com/tieto/core/sus/api/**',
+                    ])
+        }))
+    }
 }
 
 compileJava.dependsOn tasks.openApiGenerate
