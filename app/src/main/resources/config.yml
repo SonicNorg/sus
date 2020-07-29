@@ -32,3 +32,19 @@ logging:
   level:
     com.tieto: DEBUG
     root: WARN
+management:
+  endpoint:
+    metrics:
+      enabled: true
+  endpoints:
+    jmx:
+      exposure:
+        include: "*"
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    export:
+      jmx:
+        domain: com.tieto.core.sus.metrics
+        enabled: true

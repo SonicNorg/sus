@@ -35,22 +35,6 @@ spring:
     port: ${service.sus.rabbit.port}
     username: ${service.sus.rabbit.username}
     password: ${service.sus.rabbit.password}
-management:
-  endpoint:
-    metrics:
-      enabled: true
-  endpoints:
-    jmx:
-      exposure:
-        include: "*"
-    web:
-      exposure:
-        include: "*"
-  metrics:
-    export:
-      jmx:
-        domain: com.tieto.core.sus.metrics
-        enabled: true
 info:
   app:
     name: ${spring.application.name}
