@@ -17,3 +17,18 @@ service:
       exchangeOut: SUS.OUT_exchange
       routingKeyIn: toSusIn
       routingKeyOut: toSusOut
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 30000
+        read-timeout: 10000
+imdb:
+  name: imdb
+logging:
+  file:
+    name: ./logs/is.log
+    max-size: 2MB
+  level:
+    com.tieto: DEBUG
+    root: WARN

@@ -10,7 +10,6 @@ spring:
         enabled: true
         format: yaml
       discovery:
-        prefer-ip-address: true
         heartbeat:
           enabled: true
         instance-id: ${spring.application.name}-${spring.cloud.client.hostname}-${server.port}
