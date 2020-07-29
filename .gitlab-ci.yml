@@ -1,0 +1,54 @@
+stages:
+  - build
+  - dockerize
+  - test
+
+before_script:
+  - echo `pwd` # debug
+  #  - echo "$CI_BUILD_NAME, $CI_BUILD_REF_NAME $CI_BUILD_STAGE" # debug
+  - chmod +x ./gradlew
+  - export GRADLE_USER_HOME=$CI_PROJECT_DIR/.gradle
+
+cache:
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+
+test:
+  tags:
+    - java11
+  stage: test
+  artifacts:
+    paths:
+      - app/build/libs/*.jar
+      - app/build/reports/jacoco
+    expire_in: 1 day
+  script:
+    - ./gradlew build
+    - cat app/build/reports/jacoco/test/html/index.html
+  coverage: '/Total.*?([0-9]{1,3})%/'
+
+dockerize:
+  tags:
+    - java11
+  stage: dockerize
+  dependencies:
+    - test
+  script:
+    - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY
+    - docker build --no-cache --force-rm=true -t sus_image .
+  only:
+    - master
+
+deploy:
+  tags:
+    - java11
+  stage: deploy
+  dependencies:
+    - dockerize
+  when: manual
+  script:
+    - docker stop sus && docker rm sus
+    - docker run -d --name sus -p 8991:8991 -e CONSUL_HOST=nepavel.name sus_image
+  only:
+    - master
