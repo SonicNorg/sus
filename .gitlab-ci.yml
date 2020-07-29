@@ -1,7 +1,7 @@
 stages:
-  - build
-  - dockerize
   - test
+  - dockerize
+  - deploy
 
 before_script:
   - echo `pwd` # debug
