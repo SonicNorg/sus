@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
+import java.net.SocketTimeoutException;
 
 @Service
 public class SusServiceImpl implements SusService {
@@ -28,7 +30,7 @@ public class SusServiceImpl implements SusService {
     public DataEntity updateStatus(@NotNull String accountId, @NotNull String status, @Nullable String msisdn) {
         DataEntity entity = getDataEntity(accountId, msisdn);
         if (entity == null) {
-            ResponseEntity<OneOfEnrichResponseErrorResponse> responseEntity = imdbFeignClient.enrich(accountId);
+            ResponseEntity<OneOfEnrichResponseErrorResponse> responseEntity = fetchRetrying(accountId);
             if (responseEntity.getStatusCode() != HttpStatus.OK) {
                 throw new RuntimeException(responseEntity.getBody() == null ? "Неизвестная ошибка InMemoryDatabase"
                         : responseEntity.getBody().getMessage());
@@ -39,6 +41,10 @@ public class SusServiceImpl implements SusService {
             }
 
             if (responseEntity.getBody().getMsisdn() != null) {
+                if (msisdn == null) {
+                    status = "complete";
+                    msisdn = responseEntity.getBody().getMsisdn();
+                }
                 if (responseEntity.getBody().getMsisdn().equals(msisdn)) {
                     status = "complete";
                     msisdn = responseEntity.getBody().getMsisdn();
@@ -54,6 +60,11 @@ public class SusServiceImpl implements SusService {
             throw new RuntimeException("Обновлено " + result + " записей, хотя должна быть обновлена только одна.");
         }
         return getDataEntity(accountId, msisdn); //coz we need return updated entity
+    }
+
+    @Retryable(SocketTimeoutException.class)
+    private ResponseEntity<OneOfEnrichResponseErrorResponse> fetchRetrying(@NotNull String accountId) {
+        return imdbFeignClient.enrich(accountId);
     }
 
     private DataEntity getDataEntity(@NotNull String accountId, @Nullable String msisdn) {

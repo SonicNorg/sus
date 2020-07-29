@@ -24,9 +24,14 @@ public class SusMessageListener {
     @RabbitListener(queues = "${service.sus.rabbit.queueIn:test}")
     public void process(MessageEntity messageEntity) {
         log.debug("Received message from rabbitMQ: " + messageEntity.toString());
-        DataEntity dataEntity = service.updateStatus(messageEntity.getAccountId(), messageEntity.getStatus(), messageEntity.getMsisdn());
+        DataEntity dataEntity = null;
+        try {
+            dataEntity = service.updateStatus(messageEntity.getAccountId(), messageEntity.getStatus(), messageEntity.getMsisdn());
+        } catch (Exception ex) {
+            log.error("Unexpected error in processing message: {}. Error: {}", messageEntity, ex, ex);
+        }
         if (dataEntity == null) {
-            messageSender.sendMessage(new MessageEntity(messageEntity.getAccountId(), "failed", null));
+            messageSender.sendMessage(new MessageEntity(messageEntity.getAccountId(), "failed", messageEntity.getMsisdn()));
         } else {
             messageSender.sendMessage(new MessageEntity(dataEntity.getAccountId(), dataEntity.getStatus(), dataEntity.getMsisdn()));
         }
