@@ -29,7 +29,7 @@ public class SusController implements SusApi {
 
     @Override
     public ResponseEntity<OneOfUpdateResponseErrorResponse> updateStatus(@NotNull @Valid String accountId, @NotNull @Valid String status, @Valid String msisdn) {
-        DataEntity dataEntity = null;
+        DataEntity dataEntity;
         try {
             dataEntity = service.updateStatus(accountId, status, msisdn);
         } catch (DataAccessException dae) {
@@ -54,9 +54,6 @@ public class SusController implements SusApi {
                                 .message("Произошла неопределённая ошибка, обратитесь к администратору")
                                 .code(ErrorCode.NUMBER_2));
             }
-        }
-        if (dataEntity == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new OneOfUpdateResponseErrorResponse());
         }
         return ResponseEntity.ok().build();
     }

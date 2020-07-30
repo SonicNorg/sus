@@ -28,7 +28,7 @@ imdb:
 
 logging:
   file:
-    name: ./logs/is.log
+    name: ./logs/sus.log
     max-size: 2MB
   level:
     com.tieto: DEBUG
