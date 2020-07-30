@@ -17,6 +17,7 @@ import java.net.SocketTimeoutException;
 
 @Service
 public class SusServiceImpl implements SusService {
+    private static final String SUCCESS_STATUS = "complete";
     private final SusRepository susRepository;
     private final ImdbFeignClient imdbFeignClient;
 
@@ -42,11 +43,10 @@ public class SusServiceImpl implements SusService {
 
             if (responseEntity.getBody().getMsisdn() != null) {
                 if (msisdn == null) {
-                    status = "complete";
+                    status = SUCCESS_STATUS;
                     msisdn = responseEntity.getBody().getMsisdn();
-                }
-                if (responseEntity.getBody().getMsisdn().equals(msisdn)) {
-                    status = "complete";
+                } else if (responseEntity.getBody().getMsisdn().equals(msisdn)) {
+                    status = SUCCESS_STATUS;
                     msisdn = responseEntity.getBody().getMsisdn();
                 } else {
                     return null;
