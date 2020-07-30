@@ -1,0 +1,24 @@
+2020-07-30 22:36:14.270  INFO 628 --- [main] com.tieto.core.sus.SusApplication        : The following profiles are active: dev
+2020-07-30 22:36:15.607  WARN 628 --- [main] o.s.boot.actuate.endpoint.EndpointId     : Endpoint ID 'bus-env' contains invalid characters, please migrate to a valid format.
+2020-07-30 22:36:16.038  WARN 628 --- [main] o.s.boot.actuate.endpoint.EndpointId     : Endpoint ID 'bus-refresh' contains invalid characters, please migrate to a valid format.
+2020-07-30 22:36:16.142  WARN 628 --- [main] o.s.boot.actuate.endpoint.EndpointId     : Endpoint ID 'service-registry' contains invalid characters, please migrate to a valid format.
+2020-07-30 22:36:17.622  WARN 628 --- [main] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2020-07-30 22:36:28.413  WARN 628 --- [main] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2020-07-30 22:36:30.307  WARN 628 --- [main] ockingLoadBalancerClientRibbonWarnLogger : You already have RibbonLoadBalancerClient on your classpath. It will be used by default. As Spring Cloud Ribbon is in maintenance mode. We recommend switching to BlockingLoadBalancerClient instead. In order to use it, set the value of `spring.cloud.loadbalancer.ribbon.enabled` to `false` or remove spring-cloud-starter-netflix-ribbon from your project.
+2020-07-30 22:36:34.400  INFO 628 --- [main] com.tieto.core.sus.SusApplication        : Started SusApplication in 24.58 seconds (JVM running for 27.177)
+2020-07-30 22:44:10.629  INFO 9340 --- [main] com.tieto.core.sus.SusApplication        : The following profiles are active: dev
+2020-07-30 22:44:11.844  WARN 9340 --- [main] o.s.boot.actuate.endpoint.EndpointId     : Endpoint ID 'bus-env' contains invalid characters, please migrate to a valid format.
+2020-07-30 22:44:12.244  WARN 9340 --- [main] o.s.boot.actuate.endpoint.EndpointId     : Endpoint ID 'bus-refresh' contains invalid characters, please migrate to a valid format.
+2020-07-30 22:44:12.359  WARN 9340 --- [main] o.s.boot.actuate.endpoint.EndpointId     : Endpoint ID 'service-registry' contains invalid characters, please migrate to a valid format.
+2020-07-30 22:44:13.749  WARN 9340 --- [main] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2020-07-30 22:44:22.538  WARN 9340 --- [main] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2020-07-30 22:44:24.358  WARN 9340 --- [main] ockingLoadBalancerClientRibbonWarnLogger : You already have RibbonLoadBalancerClient on your classpath. It will be used by default. As Spring Cloud Ribbon is in maintenance mode. We recommend switching to BlockingLoadBalancerClient instead. In order to use it, set the value of `spring.cloud.loadbalancer.ribbon.enabled` to `false` or remove spring-cloud-starter-netflix-ribbon from your project.
+2020-07-30 22:44:28.411  INFO 9340 --- [main] com.tieto.core.sus.SusApplication        : Started SusApplication in 22.187 seconds (JVM running for 25.333)
+2020-07-30 22:47:55.607  INFO 11588 --- [main] com.tieto.core.sus.SusApplication        : The following profiles are active: dev
+2020-07-30 22:47:56.779  WARN 11588 --- [main] o.s.boot.actuate.endpoint.EndpointId     : Endpoint ID 'bus-env' contains invalid characters, please migrate to a valid format.
+2020-07-30 22:47:57.217  WARN 11588 --- [main] o.s.boot.actuate.endpoint.EndpointId     : Endpoint ID 'bus-refresh' contains invalid characters, please migrate to a valid format.
+2020-07-30 22:47:57.306  WARN 11588 --- [main] o.s.boot.actuate.endpoint.EndpointId     : Endpoint ID 'service-registry' contains invalid characters, please migrate to a valid format.
+2020-07-30 22:47:58.642  WARN 11588 --- [main] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2020-07-30 22:48:08.321  WARN 11588 --- [main] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2020-07-30 22:48:10.389  WARN 11588 --- [main] ockingLoadBalancerClientRibbonWarnLogger : You already have RibbonLoadBalancerClient on your classpath. It will be used by default. As Spring Cloud Ribbon is in maintenance mode. We recommend switching to BlockingLoadBalancerClient instead. In order to use it, set the value of `spring.cloud.loadbalancer.ribbon.enabled` to `false` or remove spring-cloud-starter-netflix-ribbon from your project.
+2020-07-30 22:48:14.992  INFO 11588 --- [main] com.tieto.core.sus.SusApplication        : Started SusApplication in 24.21 seconds (JVM running for 27.149)
