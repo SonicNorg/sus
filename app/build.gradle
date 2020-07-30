@@ -75,6 +75,7 @@ jacocoTestReport {
                     exclude: [
                             'com/tieto/core/sus/model/**',
                             'com/tieto/core/sus/api/**',
+                            'com/tieto/core/sus/config/**',
                     ])
         }))
     }

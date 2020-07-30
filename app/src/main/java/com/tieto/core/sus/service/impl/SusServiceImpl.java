@@ -6,6 +6,7 @@ import com.tieto.core.sus.model.DataEntity;
 import com.tieto.core.sus.repository.SusRepository;
 import com.tieto.core.sus.service.SusService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
@@ -17,6 +18,9 @@ import java.net.SocketTimeoutException;
 
 @Service
 public class SusServiceImpl implements SusService {
+    public static final String MSISDN_NOT_EQUALS = "Переданный msisdn не совпадает с тем, что вернулся из IMDB";
+    public static final String MSISDN_NOT_FOUND = "Ответ из IMDB без msisdn";
+    private static final String SUCCESS_STATUS = "complete";
     private final SusRepository susRepository;
     private final ImdbFeignClient imdbFeignClient;
 
@@ -27,7 +31,7 @@ public class SusServiceImpl implements SusService {
     }
 
     @Override
-    public DataEntity updateStatus(@NotNull String accountId, @NotNull String status, @Nullable String msisdn) {
+    public DataEntity updateStatus(@NotNull String accountId, @NotNull String status, @Nullable String msisdn) throws DataAccessException {
         DataEntity entity = getDataEntity(accountId, msisdn);
         if (entity == null) {
             ResponseEntity<OneOfEnrichResponseErrorResponse> responseEntity = fetchRetrying(accountId);
@@ -42,17 +46,16 @@ public class SusServiceImpl implements SusService {
 
             if (responseEntity.getBody().getMsisdn() != null) {
                 if (msisdn == null) {
-                    status = "complete";
+                    status = SUCCESS_STATUS;
                     msisdn = responseEntity.getBody().getMsisdn();
-                }
-                if (responseEntity.getBody().getMsisdn().equals(msisdn)) {
-                    status = "complete";
+                } else if (responseEntity.getBody().getMsisdn().equals(msisdn)) {
+                    status = SUCCESS_STATUS;
                     msisdn = responseEntity.getBody().getMsisdn();
                 } else {
-                    return null;
+                    throw new RuntimeException(MSISDN_NOT_EQUALS);
                 }
             } else {
-                return null;
+                throw new RuntimeException(MSISDN_NOT_FOUND);
             }
         }
         int result = susRepository.updateDataEntity(accountId, status, msisdn);
@@ -67,7 +70,7 @@ public class SusServiceImpl implements SusService {
         return imdbFeignClient.enrich(accountId);
     }
 
-    private DataEntity getDataEntity(@NotNull String accountId, @Nullable String msisdn) {
+    private DataEntity getDataEntity(@NotNull String accountId, @Nullable String msisdn) throws DataAccessException {
         DataEntity entity;
         if (msisdn != null) {
             entity = susRepository.findByAccountIdAndMsisdn(accountId, msisdn);
