@@ -1,5 +1,6 @@
 package com.tieto.core.sus.repository;
 
+import io.micrometer.core.annotation.Timed;
 import lombok.extern.slf4j.Slf4j;
 import com.tieto.core.sus.model.DataEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,18 +26,21 @@ public class SusRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @Timed("find_by_acc")
     public DataEntity findByAccountId(String accountId) throws DataAccessException {
         List<DataEntity> result = jdbcTemplate.query(select_by_accountid_query, new Object[]{accountId}, (rs, rowNum) -> new DataEntity(
                 rs.getString("msisdn"), rs.getString("accountId"), rs.getString("status")));
         return result.isEmpty() ? null : result.get(0);
     }
 
+    @Timed("find_by_acc_msisdn")
     public DataEntity findByAccountIdAndMsisdn(String accountId, String msisdn) throws DataAccessException {
         List<DataEntity> result = jdbcTemplate.query(select_by_accountid_and_msisdn_query, new Object[]{accountId, msisdn}, (rs, rowNum) -> new DataEntity(
                 rs.getString("msisdn"), rs.getString("accountId"), rs.getString("status")));
         return result.isEmpty() ? null : result.get(0);
     }
 
+    @Timed("update")
     public int updateDataEntity(String accountId, String status, String msisdn) throws DataAccessException {
         if (msisdn != null) {
             return jdbcTemplate.update(update_query_with_msisdn, status, msisdn, accountId);

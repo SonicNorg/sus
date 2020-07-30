@@ -25,6 +25,7 @@ feign:
         read-timeout: 10000
 imdb:
   name: imdb
+
 logging:
   file:
     name: ./logs/is.log
@@ -32,18 +33,22 @@ logging:
   level:
     com.tieto: DEBUG
     root: WARN
+
 management:
   endpoint:
     metrics:
       enabled: true
   endpoints:
     jmx:
+      domain: com.tieto.core.sus.metrics
       exposure:
         include: "*"
     web:
       exposure:
         include: "*"
   metrics:
+    enable:
+      jvm: true
     export:
       jmx:
         domain: com.tieto.core.sus.metrics
