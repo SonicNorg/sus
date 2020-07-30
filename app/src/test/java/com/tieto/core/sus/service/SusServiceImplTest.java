@@ -11,9 +11,6 @@ import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.io.InterruptedIOException;
-import java.net.SocketTimeoutException;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.times;
@@ -221,6 +218,40 @@ public class SusServiceImplTest {
             verify(susRepository, times(1)).findByAccountIdAndMsisdn(ACCOUNT_ID, MSISDN);
             verify(susRepository, times(1)).updateDataEntity(ACCOUNT_ID, successStatus, MSISDN);
             verify(imdbFeignClient, times(1)).enrich(ACCOUNT_ID);
+        }
+    }
+
+    @Test
+    public void updateStatusDataInImdbWithMissedWithMsisdnTest() {
+        OneOfEnrichResponseErrorResponse body = new OneOfEnrichResponseErrorResponse()
+                .accountId(ACCOUNT_ID)
+                .msisdn(null);
+        Mockito.when(susRepository.findByAccountIdAndMsisdn(ACCOUNT_ID, MSISDN)).thenReturn(null);
+        Mockito.when(imdbFeignClient.enrich(ACCOUNT_ID)).thenReturn(new ResponseEntity<>(body, HttpStatus.OK));
+
+        try {
+            service.updateStatus(ACCOUNT_ID, STATUS, MSISDN);
+        } catch (RuntimeException ex) {
+            verify(susRepository, times(1)).findByAccountIdAndMsisdn(ACCOUNT_ID, MSISDN);
+            verify(imdbFeignClient, times(1)).enrich(ACCOUNT_ID);
+            assertEquals("Ответ из IMDB без msisdn", ex.getMessage());
+        }
+    }
+
+    @Test
+    public void updateStatusDataInImdbWithAnotherWithMsisdnTest() {
+        OneOfEnrichResponseErrorResponse body = new OneOfEnrichResponseErrorResponse()
+                .accountId(ACCOUNT_ID)
+                .msisdn("some random msisdn");
+        Mockito.when(susRepository.findByAccountIdAndMsisdn(ACCOUNT_ID, MSISDN)).thenReturn(null);
+        Mockito.when(imdbFeignClient.enrich(ACCOUNT_ID)).thenReturn(new ResponseEntity<>(body, HttpStatus.OK));
+
+        try {
+            service.updateStatus(ACCOUNT_ID, STATUS, MSISDN);
+        } catch (RuntimeException ex) {
+            verify(susRepository, times(1)).findByAccountIdAndMsisdn(ACCOUNT_ID, MSISDN);
+            verify(imdbFeignClient, times(1)).enrich(ACCOUNT_ID);
+            assertEquals("Переданный msisdn не совпадает с тем, что вернулся из IMDB", ex.getMessage());
         }
     }
 }

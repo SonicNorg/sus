@@ -34,6 +34,12 @@ paths:
       responses:
         200:
           description: Успешно выполнено
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/UpdateResponse'
+                  - $ref: '#/components/schemas/ErrorResponse'
         400:
           description: Не удалось найти запись с заданным ЛС
           content:
@@ -48,6 +54,11 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
+    UpdateResponse:
+      type: object
+      properties:
+        message:
+          type: string
     ErrorCode:
       type: integer
       enum:
@@ -61,7 +72,7 @@ components:
         * 1 - Ошибка доступа к БД
         * 2 - Неизвестная ошибка сервиса (неперехваченные исключения)
         * 3 - Не удалось найти запись с заданным ЛС
-        * 4 - Зарезервирован
+        * 4 - Переданный мсисдн не соответствует хранимому
         * 5 - Зарезервирован
     ErrorResponse:
       type: object
@@ -74,3 +85,7 @@ components:
       required:
         - code
         - message
+    OneOfUpdateResponseErrorResponse:
+      oneOf:
+        - $ref: '#/components/schemas/UpdateResponse'
+        - $ref: '#/components/schemas/ErrorResponse'
