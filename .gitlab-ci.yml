@@ -2,6 +2,7 @@ stages:
   - test
   - dockerize
   - deploy
+  - publish
 
 before_script:
   - echo `pwd` # debug
@@ -35,10 +36,7 @@ dockerize:
   dependencies:
     - test
   script:
-    - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY
     - docker build --no-cache --force-rm=true -t sus_image .
-  only:
-    - master
 
 deploy:
   tags:
@@ -46,9 +44,19 @@ deploy:
   stage: deploy
   dependencies:
     - dockerize
-  when: manual
   script:
     - docker stop sus && docker rm sus
-    - docker run -d --name sus -p 8991:8991 -p 22324:22324 -v /var/log/sus:/app/logs -e CONSUL_HOST=nepavel.name sus_image
+    - docker run -d --name sus -p 8991:8991 -p 22324:22324 -v /var/log/sus:/app/logs -e jmx_host=$DEPLOY_HOST -e CONSUL_HOST=$CONSUL_HOST sus_image
+
+publish:
+  tags:
+    - java11
+  stage: deploy
+  dependencies:
+    - dockerize
+  when: manual
+  script:
+    - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY
+    - docker tag sus_image flexhamp/sus_image:latest && docker push flexhamp/sus_image:latest
   only:
     - master
