@@ -31,7 +31,7 @@ paths:
                   - $ref: '#/components/schemas/UpdateResponse'
                   - $ref: '#/components/schemas/ErrorResponse'
         400:
-          description: Не удалось найти запись с заданным ЛС
+          description: Не удалось найти запись с заданным ЛС, либо переданный MSISDN не совпадает с хранимым
           content:
             application/json:
               schema:

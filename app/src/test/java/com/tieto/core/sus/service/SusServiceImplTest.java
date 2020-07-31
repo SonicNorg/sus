@@ -6,10 +6,14 @@ import com.tieto.core.sus.client.ImdbFeignClient;
 import com.tieto.core.sus.model.DataEntity;
 import com.tieto.core.sus.repository.SusRepository;
 import com.tieto.core.sus.service.impl.SusServiceImpl;
+import feign.FeignException;
+import feign.Response;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -142,7 +146,7 @@ public class SusServiceImplTest {
 
 
     @Test
-    public void updateStatusDataInImdbStatusNotOKAndNotEmptyBodyWihoutMessageWithMsisdnTest() {
+    public void updateStatusDataInImdbStatusNotOKAndNotEmptyBodyWithoutMessageWithMsisdnTest() {
         OneOfEnrichResponseErrorResponse body = new OneOfEnrichResponseErrorResponse();
         Mockito.when(susRepository.findByAccountIdAndMsisdn(ACCOUNT_ID, MSISDN)).thenReturn(null);
         Mockito.when(imdbFeignClient.enrich(ACCOUNT_ID)).thenReturn(new ResponseEntity<>(body, HttpStatus.FORBIDDEN));
@@ -223,11 +227,8 @@ public class SusServiceImplTest {
 
     @Test
     public void updateStatusDataInImdbWithMissedWithMsisdnTest() {
-        OneOfEnrichResponseErrorResponse body = new OneOfEnrichResponseErrorResponse()
-                .accountId(ACCOUNT_ID)
-                .msisdn(null);
         Mockito.when(susRepository.findByAccountIdAndMsisdn(ACCOUNT_ID, MSISDN)).thenReturn(null);
-        Mockito.when(imdbFeignClient.enrich(ACCOUNT_ID)).thenReturn(new ResponseEntity<>(body, HttpStatus.OK));
+        Mockito.when(imdbFeignClient.enrich(ACCOUNT_ID)).thenThrow(FeignException.errorStatus("/enrich", Response.builder().status(400).body("{\"accountId\": \"523456731\"}", StandardCharsets.UTF_8).build()));
 
         try {
             service.updateStatus(ACCOUNT_ID, STATUS, MSISDN);

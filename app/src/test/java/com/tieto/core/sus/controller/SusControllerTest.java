@@ -3,6 +3,7 @@ package com.tieto.core.sus.controller;
 import com.tieto.core.sus.model.DataEntity;
 import com.tieto.core.sus.model.ErrorCode;
 import com.tieto.core.sus.model.OneOfUpdateResponseErrorResponse;
+import com.tieto.core.sus.model.UpdateRequest;
 import com.tieto.core.sus.service.SusService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -25,22 +26,32 @@ public class SusControllerTest {
     private static final String ACCOUNT_ID = "123456";
     private static final String MSISDN = "9993332211";
     private static final String STATUS = "testStatus";
+    private final UpdateRequest updateRequestWithMsisdn = new UpdateRequest().accountId(ACCOUNT_ID).status(STATUS).msisdn(MSISDN);
+    private final UpdateRequest updateRequestNoMsisdn = new UpdateRequest().accountId(ACCOUNT_ID).status(STATUS);
 
     @Test
     public void updateStatusSuccessTest() {
         Mockito.when(service.updateStatus(ACCOUNT_ID, STATUS, MSISDN)).thenReturn(new DataEntity(MSISDN, ACCOUNT_ID, STATUS));
-        ResponseEntity<OneOfUpdateResponseErrorResponse> resp = controller.updateStatus(ACCOUNT_ID, STATUS, MSISDN);
+        ResponseEntity<OneOfUpdateResponseErrorResponse> resp = controller.updateStatus(updateRequestWithMsisdn);
         verify(service, times(1)).updateStatus(ACCOUNT_ID, STATUS, MSISDN);
+        assertEquals(HttpStatus.OK ,resp.getStatusCode());
+    }
+
+    @Test
+    public void updateStatusNoMsisdnSuccessTest() {
+        Mockito.when(service.updateStatus(ACCOUNT_ID, STATUS, null)).thenReturn(new DataEntity(MSISDN, ACCOUNT_ID, STATUS));
+        ResponseEntity<OneOfUpdateResponseErrorResponse> resp = controller.updateStatus(updateRequestNoMsisdn);
+        verify(service, times(1)).updateStatus(ACCOUNT_ID, STATUS, null);
         assertEquals(HttpStatus.OK ,resp.getStatusCode());
     }
 
     @Test
     public void updateStatusDBErrorTest() {
         Mockito.when(service.updateStatus(ACCOUNT_ID, STATUS, MSISDN))
-                .thenThrow(new PermissionDeniedDataAccessException("test msg", null));
-        ResponseEntity<OneOfUpdateResponseErrorResponse> resp = controller.updateStatus(ACCOUNT_ID, STATUS, MSISDN);
+                .thenThrow(new PermissionDeniedDataAccessException("test msg", new RuntimeException()));
+        ResponseEntity<OneOfUpdateResponseErrorResponse> resp = controller.updateStatus(updateRequestWithMsisdn);
         verify(service, times(1)).updateStatus(ACCOUNT_ID, STATUS, MSISDN);
-        assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, resp.getStatusCode());
         assertNotNull(resp.getBody());
         assertEquals("Ошибка доступа к БД", resp.getBody().getMessage());
         assertEquals(ErrorCode.NUMBER_1, resp.getBody().getCode());
@@ -49,8 +60,8 @@ public class SusControllerTest {
     @Test
     public void updateStatusMsisdnNotEqualErrorTest() {
         Mockito.when(service.updateStatus(ACCOUNT_ID, STATUS, MSISDN))
-                .thenThrow(new RuntimeException(MSISDN_NOT_EQUALS, null));
-        ResponseEntity<OneOfUpdateResponseErrorResponse> resp = controller.updateStatus(ACCOUNT_ID, STATUS, MSISDN);
+                .thenThrow(new RuntimeException(MSISDN_NOT_EQUALS));
+        ResponseEntity<OneOfUpdateResponseErrorResponse> resp = controller.updateStatus(updateRequestWithMsisdn);
         verify(service, times(1)).updateStatus(ACCOUNT_ID, STATUS, MSISDN);
         assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
         assertNotNull(resp.getBody());
@@ -61,8 +72,8 @@ public class SusControllerTest {
     @Test
     public void updateStatusMsisdnNotFoundErrorTest() {
         Mockito.when(service.updateStatus(ACCOUNT_ID, STATUS, MSISDN))
-                .thenThrow(new RuntimeException(MSISDN_NOT_FOUND, null));
-        ResponseEntity<OneOfUpdateResponseErrorResponse> resp = controller.updateStatus(ACCOUNT_ID, STATUS, MSISDN);
+                .thenThrow(new RuntimeException(MSISDN_NOT_FOUND));
+        ResponseEntity<OneOfUpdateResponseErrorResponse> resp = controller.updateStatus(updateRequestWithMsisdn);
         verify(service, times(1)).updateStatus(ACCOUNT_ID, STATUS, MSISDN);
         assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
         assertNotNull(resp.getBody());
@@ -73,8 +84,8 @@ public class SusControllerTest {
     @Test
     public void updateStatusUnknownExceptionErrorTest() {
         Mockito.when(service.updateStatus(ACCOUNT_ID, STATUS, MSISDN))
-                .thenThrow(new RuntimeException("some random exc", null));
-        ResponseEntity<OneOfUpdateResponseErrorResponse> resp = controller.updateStatus(ACCOUNT_ID, STATUS, MSISDN);
+                .thenThrow(new RuntimeException("some random exc"));
+        ResponseEntity<OneOfUpdateResponseErrorResponse> resp = controller.updateStatus(updateRequestWithMsisdn);
         verify(service, times(1)).updateStatus(ACCOUNT_ID, STATUS, MSISDN);
         assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
         assertNotNull(resp.getBody());

@@ -2,6 +2,8 @@ package com.tieto.core.sus.controller;
 
 
 import com.tieto.core.sus.api.SusApi;
+import com.tieto.core.sus.exception.MsisdnNotEqualsException;
+import com.tieto.core.sus.exception.MsisdnNotFoundException;
 import com.tieto.core.sus.model.ErrorCode;
 import com.tieto.core.sus.model.OneOfUpdateResponseErrorResponse;
 import com.tieto.core.sus.model.UpdateRequest;
@@ -32,29 +34,28 @@ public class SusController implements SusApi {
         log.debug("update status iunput params: accountId {}, status {}, msisdn {}",
                 updateRequest.getAccountId(), updateRequest.getStatus(), updateRequest.getMsisdn());
         try {
-            service.updateStatus( updateRequest.getAccountId(), updateRequest.getStatus(), updateRequest.getMsisdn());
+            service.updateStatus(updateRequest.getAccountId(), updateRequest.getStatus(), updateRequest.getMsisdn());
         } catch (DataAccessException dae) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     new OneOfUpdateResponseErrorResponse()
                             .message("Ошибка доступа к БД")
                             .code(ErrorCode.NUMBER_1));
-        } catch (RuntimeException ex) {
-            if (SusServiceImpl.MSISDN_NOT_EQUALS.equals(ex.getMessage())) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                        new OneOfUpdateResponseErrorResponse()
-                                .message("Переданный msisdn не совпадает")
-                                .code(ErrorCode.NUMBER_4));
-            } else if (SusServiceImpl.MSISDN_NOT_FOUND.equals(ex.getMessage())) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                        new OneOfUpdateResponseErrorResponse()
-                                .message("Данный аккаунт не найден")
-                                .code(ErrorCode.NUMBER_3));
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                        new OneOfUpdateResponseErrorResponse()
-                                .message("Произошла неопределённая ошибка, обратитесь к администратору")
-                                .code(ErrorCode.NUMBER_2));
-            }
+        } catch (MsisdnNotEqualsException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    new OneOfUpdateResponseErrorResponse()
+                            .message("Переданный msisdn не совпадает")
+                            .code(ErrorCode.NUMBER_4));
+        } catch (MsisdnNotFoundException ex) {
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    new OneOfUpdateResponseErrorResponse()
+                            .message("Данный аккаунт не найден")
+                            .code(ErrorCode.NUMBER_3));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new OneOfUpdateResponseErrorResponse()
+                            .message("Произошла неопределённая ошибка, обратитесь к администратору")
+                            .code(ErrorCode.NUMBER_2));
         }
         return ResponseEntity.ok().build();
     }
