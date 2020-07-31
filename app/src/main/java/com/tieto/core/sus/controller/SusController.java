@@ -4,6 +4,7 @@ package com.tieto.core.sus.controller;
 import com.tieto.core.sus.api.SusApi;
 import com.tieto.core.sus.model.ErrorCode;
 import com.tieto.core.sus.model.OneOfUpdateResponseErrorResponse;
+import com.tieto.core.sus.model.UpdateRequest;
 import com.tieto.core.sus.service.SusService;
 import com.tieto.core.sus.service.impl.SusServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +28,11 @@ public class SusController implements SusApi {
     }
 
     @Override
-    public ResponseEntity<OneOfUpdateResponseErrorResponse> updateStatus(@NotNull @Valid String accountId, @NotNull @Valid String status, @Valid String msisdn) {
-        log.debug("update status iunput params: accountId {}, status {}, msisdn {}", accountId, status, msisdn);
+    public ResponseEntity<OneOfUpdateResponseErrorResponse> updateStatus(@Valid UpdateRequest updateRequest) {
+        log.debug("update status iunput params: accountId {}, status {}, msisdn {}",
+                updateRequest.getAccountId(), updateRequest.getStatus(), updateRequest.getMsisdn());
         try {
-            service.updateStatus(accountId, status, msisdn);
+            service.updateStatus( updateRequest.getAccountId(), updateRequest.getStatus(), updateRequest.getMsisdn());
         } catch (DataAccessException dae) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new OneOfUpdateResponseErrorResponse()

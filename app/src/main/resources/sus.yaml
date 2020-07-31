@@ -10,27 +10,17 @@ info:
     min-nodes: 1
 paths:
   /updatestatus:
-    get:
+    post:
       description: Обновляет статус по ЛС
       operationId: updateStatus
       tags:
         - sus
-      parameters:
-        - in: query
-          name: accountId
-          schema:
-            type: string
-          required: true
-        - in: query
-          name: status
-          schema:
-            type: string
-          required: true
-        - in: query
-          name: msisdn
-          schema:
-            type: string
-          required: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRequest'
       responses:
         200:
           description: Успешно выполнено
@@ -54,6 +44,21 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
+    UpdateRequest:
+      type: object
+      properties:
+        accountId:
+          type: string
+        status:
+          type: string
+        msisdn:
+          pattern: '^\d{11,15}$'
+          type: string
+          description: Номер абонента. В соответствии с E.164, может достигать 15 знаков, содержит только цифры. Включает код страны (CC).
+          example: 3809130125566
+      required:
+        - accountId
+        - status
     UpdateResponse:
       type: object
       properties:

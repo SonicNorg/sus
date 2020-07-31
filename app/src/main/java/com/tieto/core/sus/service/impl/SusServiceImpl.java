@@ -50,11 +50,9 @@ public class SusServiceImpl implements SusService {
 
             if (responseEntity.getBody().getMsisdn() != null) {
                 if (msisdn == null) {
-                    status = SUCCESS_STATUS;
-                    msisdn = responseEntity.getBody().getMsisdn();
+                    return processSuccessStatus(accountId, responseEntity.getBody().getMsisdn(), status);
                 } else if (responseEntity.getBody().getMsisdn().equals(msisdn)) {
-                    status = SUCCESS_STATUS;
-                    msisdn = responseEntity.getBody().getMsisdn();
+                    return processSuccessStatus(accountId, msisdn, status);
                 } else {
                     log.error(MSISDN_NOT_EQUALS);
                     throw new RuntimeException(MSISDN_NOT_EQUALS);
@@ -63,15 +61,16 @@ public class SusServiceImpl implements SusService {
                 log.error(MSISDN_NOT_FOUND);
                 throw new RuntimeException(MSISDN_NOT_FOUND);
             }
+        } else {
+            int result = susRepository.updateDataEntity(accountId, status, msisdn);
+            if (result != 1) {
+                String message = "Обновлено " + result + " записей, хотя должна быть обновлена только одна.";
+                log.error(message);
+                throw new RuntimeException(message);
+            }
+            log.info("Updated {} enteties in DB.", result);
+            return getDataEntity(accountId, msisdn); //coz we need return updated entity
         }
-        int result = susRepository.updateDataEntity(accountId, status, msisdn);
-        if (result != 1) {
-            String message = "Обновлено " + result + " записей, хотя должна быть обновлена только одна.";
-            log.error(message);
-            throw new RuntimeException(message);
-        }
-        log.info("Updated {} enteties in DB.", result);
-        return getDataEntity(accountId, msisdn); //coz we need return updated entity
     }
 
     @Retryable(SocketTimeoutException.class)
@@ -87,5 +86,15 @@ public class SusServiceImpl implements SusService {
             entity = susRepository.findByAccountId(accountId);
         }
         return entity;
+    }
+
+    private DataEntity processSuccessStatus(@NotNull String accountId, @NotNull String msisdn, @NotNull String status) {
+        int result = susRepository.createDataEntity(accountId, status, msisdn);
+        if (result != 1) {
+            String message = "Создано " + result + " записей, хотя должна быть создана только одна.";
+            log.error(message);
+            throw new RuntimeException(message);
+        }
+        return getDataEntity(accountId, msisdn); //coz we need return updated entity
     }
 }
