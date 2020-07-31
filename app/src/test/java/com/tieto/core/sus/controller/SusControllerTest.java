@@ -1,5 +1,6 @@
 package com.tieto.core.sus.controller;
 
+import com.tieto.core.sus.config.RateLimitConfig;
 import com.tieto.core.sus.exception.MsisdnNotEqualsException;
 import com.tieto.core.sus.exception.MsisdnNotFoundException;
 import com.tieto.core.sus.model.DataEntity;
@@ -21,6 +22,10 @@ import static org.mockito.Mockito.verify;
 public class SusControllerTest {
     private final SusService service = Mockito.mock(SusService.class);
 
+    private static final RateLimitConfig config = new RateLimitConfig();
+    static {
+        config.setRateLimitPerSecond(10);
+    }
     private final SusController controller = new SusController(service, config);
 
     private static final String ACCOUNT_ID = "123456";
