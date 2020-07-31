@@ -69,7 +69,7 @@ public class SusServiceImpl implements SusService {
                 log.error(message);
                 throw new RuntimeException(message);
             }
-            log.info("Updated {} enteties in DB.", result);
+            log.info("Updated {} entities in DB.", result);
             return getDataEntity(accountId, msisdn); //coz we need return updated entity
         }
     }
