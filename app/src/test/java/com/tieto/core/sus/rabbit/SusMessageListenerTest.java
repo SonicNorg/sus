@@ -3,7 +3,9 @@ package com.tieto.core.sus.rabbit;
 import com.tieto.core.sus.messaging.rabbit.SusMessageListener;
 import com.tieto.core.sus.messaging.rabbit.SusMessageSender;
 import com.tieto.core.sus.model.DataEntity;
+import com.tieto.core.sus.model.ErrorCode;
 import com.tieto.core.sus.model.MessageEntity;
+import com.tieto.core.sus.model.RabbitResponse;
 import com.tieto.core.sus.service.SusService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -42,7 +44,7 @@ public class SusMessageListenerTest {
         listener.process(messageEntity);
         verify(service, times(1)).updateStatus(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
         verify(messageSender, times(1)).sendMessage(
-                new MessageEntity(messageEntity.getAccountId(), "failed", messageEntity.getMsisdn()));
+                new RabbitResponse(messageEntity, false, ErrorCode.NUMBER_2, "Произошла неопределённая ошибка, обратитесь к администратору"));
     }
 
     @Test
@@ -54,6 +56,6 @@ public class SusMessageListenerTest {
         listener.process(messageEntity);
         verify(service, times(1)).updateStatus(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
         verify(messageSender, times(1)).sendMessage(
-                new MessageEntity(messageEntity.getAccountId(), "failed", messageEntity.getMsisdn()));
+                new RabbitResponse(messageEntity, false, ErrorCode.NUMBER_3, "Данный аккаунт не найден"));
     }
 }

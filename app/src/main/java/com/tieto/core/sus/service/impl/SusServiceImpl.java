@@ -2,6 +2,8 @@ package com.tieto.core.sus.service.impl;
 
 import com.tieto.core.imdb.model.OneOfEnrichResponseErrorResponse;
 import com.tieto.core.sus.client.ImdbFeignClient;
+import com.tieto.core.sus.exception.MsisdnNotEqualsException;
+import com.tieto.core.sus.exception.MsisdnNotFoundException;
 import com.tieto.core.sus.model.DataEntity;
 import com.tieto.core.sus.repository.SusRepository;
 import com.tieto.core.sus.service.SusService;
@@ -22,7 +24,6 @@ import java.net.SocketTimeoutException;
 public class SusServiceImpl implements SusService {
     public static final String MSISDN_NOT_EQUALS = "Переданный msisdn не совпадает с тем, что вернулся из IMDB";
     public static final String MSISDN_NOT_FOUND = "Ответ из IMDB без msisdn";
-    private static final String SUCCESS_STATUS = "complete";
     private final SusRepository susRepository;
     private final ImdbFeignClient imdbFeignClient;
 
@@ -55,11 +56,11 @@ public class SusServiceImpl implements SusService {
                     return processSuccessStatus(accountId, msisdn, status);
                 } else {
                     log.error(MSISDN_NOT_EQUALS);
-                    throw new RuntimeException(MSISDN_NOT_EQUALS);
+                    throw new MsisdnNotEqualsException(responseEntity.getBody().getMsisdn(), msisdn);
                 }
             } else {
                 log.error(MSISDN_NOT_FOUND);
-                throw new RuntimeException(MSISDN_NOT_FOUND);
+                throw new MsisdnNotFoundException();
             }
         } else {
             int result = susRepository.updateDataEntity(accountId, status, msisdn);
