@@ -1,5 +1,7 @@
 package com.tieto.core.sus.controller;
 
+import com.tieto.core.sus.exception.MsisdnNotEqualsException;
+import com.tieto.core.sus.exception.MsisdnNotFoundException;
 import com.tieto.core.sus.model.DataEntity;
 import com.tieto.core.sus.model.ErrorCode;
 import com.tieto.core.sus.model.OneOfUpdateResponseErrorResponse;
@@ -60,7 +62,7 @@ public class SusControllerTest {
     @Test
     public void updateStatusMsisdnNotEqualErrorTest() {
         Mockito.when(service.updateStatus(ACCOUNT_ID, STATUS, MSISDN))
-                .thenThrow(new RuntimeException(MSISDN_NOT_EQUALS));
+                .thenThrow(new MsisdnNotEqualsException(MSISDN, MSISDN.concat("1")));
         ResponseEntity<OneOfUpdateResponseErrorResponse> resp = controller.updateStatus(updateRequestWithMsisdn);
         verify(service, times(1)).updateStatus(ACCOUNT_ID, STATUS, MSISDN);
         assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
@@ -72,7 +74,7 @@ public class SusControllerTest {
     @Test
     public void updateStatusMsisdnNotFoundErrorTest() {
         Mockito.when(service.updateStatus(ACCOUNT_ID, STATUS, MSISDN))
-                .thenThrow(new RuntimeException(MSISDN_NOT_FOUND));
+                .thenThrow(new MsisdnNotFoundException());
         ResponseEntity<OneOfUpdateResponseErrorResponse> resp = controller.updateStatus(updateRequestWithMsisdn);
         verify(service, times(1)).updateStatus(ACCOUNT_ID, STATUS, MSISDN);
         assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
@@ -87,7 +89,7 @@ public class SusControllerTest {
                 .thenThrow(new RuntimeException("some random exc"));
         ResponseEntity<OneOfUpdateResponseErrorResponse> resp = controller.updateStatus(updateRequestWithMsisdn);
         verify(service, times(1)).updateStatus(ACCOUNT_ID, STATUS, MSISDN);
-        assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, resp.getStatusCode());
         assertNotNull(resp.getBody());
         assertEquals("Произошла неопределённая ошибка, обратитесь к администратору", resp.getBody().getMessage());
         assertEquals(ErrorCode.NUMBER_2, resp.getBody().getCode());
