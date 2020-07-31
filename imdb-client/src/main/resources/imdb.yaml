@@ -29,6 +29,12 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/EnrichResponse'
                   - $ref: '#/components/schemas/ErrorResponse'
+        400:
+          description: Запрошенный аккаунт не найден, в боди будет возвращен запрошенный accountId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrichResponse'
         500:
           description: Внутренняя ошибка
           content:

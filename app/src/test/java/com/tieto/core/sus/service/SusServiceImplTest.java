@@ -115,36 +115,24 @@ public class SusServiceImplTest {
         Mockito.when(susRepository.findByAccountIdAndMsisdn(ACCOUNT_ID, MSISDN)).thenReturn(null);
         Mockito.when(imdbFeignClient.enrich(ACCOUNT_ID)).thenReturn(new ResponseEntity<>(null, HttpStatus.OK));
 
-        try {
-            service.updateStatus(ACCOUNT_ID, STATUS, MSISDN);
-        } catch (RuntimeException ex) {
-            assertEquals("Пустое тело ответа сервиса IMDB, но со статусом 200 OK", ex.getMessage());
-        }
+        assertThrows(RuntimeException.class, () -> service.updateStatus(ACCOUNT_ID, STATUS, MSISDN));
     }
 
     @Test
     public void updateStatusDataInImdbStatusNotOKAndEmptyBodyWithMsisdnTest() {
         Mockito.when(susRepository.findByAccountIdAndMsisdn(ACCOUNT_ID, MSISDN)).thenReturn(null);
-        Mockito.when(imdbFeignClient.enrich(ACCOUNT_ID)).thenReturn(new ResponseEntity<>(null, HttpStatus.FORBIDDEN));
+        Mockito.when(imdbFeignClient.enrich(ACCOUNT_ID)).thenReturn(new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR));
 
-        try {
-            service.updateStatus(ACCOUNT_ID, STATUS, MSISDN);
-        } catch (RuntimeException ex) {
-            assertEquals("Неизвестная ошибка InMemoryDatabase", ex.getMessage());
-        }
+        assertThrows(RuntimeException.class, () -> service.updateStatus(ACCOUNT_ID, STATUS, MSISDN));
     }
 
 
     @Test
     public void updateStatusDataInImdbStatusNotOKAndEmptyBodyWithOutMsisdnTest() {
         Mockito.when(susRepository.findByAccountId(ACCOUNT_ID)).thenReturn(null);
-        Mockito.when(imdbFeignClient.enrich(ACCOUNT_ID)).thenReturn(new ResponseEntity<>(null, HttpStatus.FORBIDDEN));
+        Mockito.when(imdbFeignClient.enrich(ACCOUNT_ID)).thenReturn(new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR));
 
-        try {
-            service.updateStatus(ACCOUNT_ID, STATUS, null);
-        } catch (RuntimeException ex) {
-            assertEquals("Неизвестная ошибка InMemoryDatabase", ex.getMessage());
-        }
+        assertThrows(RuntimeException.class, () -> service.updateStatus(ACCOUNT_ID, STATUS, null));
     }
 
     @Test
@@ -154,11 +142,7 @@ public class SusServiceImplTest {
         Mockito.when(susRepository.findByAccountIdAndMsisdn(ACCOUNT_ID, MSISDN)).thenReturn(null);
         Mockito.when(imdbFeignClient.enrich(ACCOUNT_ID)).thenReturn(new ResponseEntity<>(body, HttpStatus.FORBIDDEN));
 
-        try {
-            service.updateStatus(ACCOUNT_ID, STATUS, MSISDN);
-        } catch (RuntimeException ex) {
-            assertEquals(failedMessage, ex.getMessage());
-        }
+        assertThrows(RuntimeException.class, () -> service.updateStatus(ACCOUNT_ID, STATUS, MSISDN));
     }
 
 
@@ -168,11 +152,7 @@ public class SusServiceImplTest {
         Mockito.when(susRepository.findByAccountIdAndMsisdn(ACCOUNT_ID, MSISDN)).thenReturn(null);
         Mockito.when(imdbFeignClient.enrich(ACCOUNT_ID)).thenReturn(new ResponseEntity<>(body, HttpStatus.FORBIDDEN));
 
-        try {
-            service.updateStatus(ACCOUNT_ID, STATUS, MSISDN);
-        } catch (RuntimeException ex) {
-            assertNull(ex.getMessage());
-        }
+        assertThrows(RuntimeException.class, () -> service.updateStatus(ACCOUNT_ID, STATUS, MSISDN));
     }
 
     @Test
@@ -182,11 +162,7 @@ public class SusServiceImplTest {
         Mockito.when(susRepository.findByAccountId(ACCOUNT_ID)).thenReturn(null);
         Mockito.when(imdbFeignClient.enrich(ACCOUNT_ID)).thenReturn(new ResponseEntity<>(body, HttpStatus.FORBIDDEN));
 
-        try {
-            service.updateStatus(ACCOUNT_ID, STATUS, null);
-        } catch (RuntimeException ex) {
-            assertEquals(failedMessage, ex.getMessage());
-        }
+        assertThrows(RuntimeException.class, () -> service.updateStatus(ACCOUNT_ID, STATUS, null));
     }
 
     @Test
@@ -195,11 +171,7 @@ public class SusServiceImplTest {
         Mockito.when(susRepository.findByAccountId(ACCOUNT_ID)).thenReturn(null);
         Mockito.when(imdbFeignClient.enrich(ACCOUNT_ID)).thenReturn(new ResponseEntity<>(body, HttpStatus.FORBIDDEN));
 
-        try {
-            service.updateStatus(ACCOUNT_ID, STATUS, null);
-        } catch (RuntimeException ex) {
-            assertNull(ex.getMessage());
-        }
+        assertThrows(RuntimeException.class, () -> service.updateStatus(ACCOUNT_ID, STATUS, null));
     }
 
     @Test

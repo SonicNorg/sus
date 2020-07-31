@@ -7,6 +7,7 @@ import com.tieto.core.sus.exception.MsisdnNotFoundException;
 import com.tieto.core.sus.model.DataEntity;
 import com.tieto.core.sus.repository.SusRepository;
 import com.tieto.core.sus.service.SusService;
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -37,11 +38,15 @@ public class SusServiceImpl implements SusService {
     public DataEntity updateStatus(@NotNull String accountId, @NotNull String status, @Nullable String msisdn) throws DataAccessException {
         DataEntity entity = getDataEntity(accountId, msisdn);
         if (entity == null) {
-            ResponseEntity<OneOfEnrichResponseErrorResponse> responseEntity = fetchRetrying(accountId);
-            if (responseEntity.getStatusCode() != HttpStatus.OK) {
-                log.error("Request to imdb for accountId {} failed with code {}", accountId, responseEntity.getStatusCode());
-                throw new RuntimeException(responseEntity.getBody() == null ? "Неизвестная ошибка InMemoryDatabase"
-                        : responseEntity.getBody().getMessage());
+            ResponseEntity<OneOfEnrichResponseErrorResponse> responseEntity;
+            try {
+                responseEntity = fetchRetrying(accountId);
+            } catch (FeignException.BadRequest ex) {
+                log.debug("Account {} not found", accountId);
+                throw new MsisdnNotFoundException();
+            } catch (Exception e) {
+                log.error("Request to imdb for accountId {} failed", accountId, e);
+                throw new RuntimeException("Неизвестная ошибка InMemoryDatabase" + e.getMessage());
             }
             if (responseEntity.getBody() == null) {
                 log.error("Empty body with request {}", responseEntity.toString());
