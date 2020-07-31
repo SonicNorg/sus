@@ -28,7 +28,8 @@ public class SusMessageSenderTest {
         MessageEntity messageEntity = new MessageEntity(ACCOUNT_ID, STATUS, MSISDN);
         Mockito.when(rabbitConfig.getExchangeOut()).thenReturn(TEST_EXCHANGE);
         Mockito.when(rabbitConfig.getRoutingKeyOut()).thenReturn(TEST_RK);
-        messageSender.sendMessage(new RabbitResponse(messageEntity, true, null, null));
-        verify(rabbitTemplate, times(1)).convertAndSend(TEST_EXCHANGE, TEST_RK, messageEntity);
+        RabbitResponse response = new RabbitResponse(messageEntity, true, null, null);
+        messageSender.sendMessage(response);
+        verify(rabbitTemplate, times(1)).convertAndSend(TEST_EXCHANGE, TEST_RK, response);
     }
 }

@@ -92,22 +92,21 @@ public class SusServiceImplTest {
 
     @Test
     public void updateStatusDataInImdbWithOutMsisdnTest() {
-        String successStatus = "complete";
-        DataEntity expected = new DataEntity(MSISDN, ACCOUNT_ID, successStatus);
+        DataEntity expected = new DataEntity(MSISDN, ACCOUNT_ID, STATUS);
         OneOfEnrichResponseErrorResponse body = new OneOfEnrichResponseErrorResponse()
                 .accountId(ACCOUNT_ID)
                 .msisdn(MSISDN);
         Mockito.when(susRepository.findByAccountId(ACCOUNT_ID)).thenReturn(null);
         Mockito.when(susRepository.findByAccountIdAndMsisdn(ACCOUNT_ID, MSISDN)).thenReturn(expected);
         Mockito.when(imdbFeignClient.enrich(ACCOUNT_ID)).thenReturn(new ResponseEntity<>(body, HttpStatus.OK));
-        Mockito.when(susRepository.updateDataEntity(ACCOUNT_ID, successStatus, MSISDN)).thenReturn(1);
+        Mockito.when(susRepository.createDataEntity(ACCOUNT_ID, STATUS, MSISDN)).thenReturn(1);
 
         DataEntity actual = service.updateStatus(ACCOUNT_ID, STATUS, null);
 
         assertEquals(expected, actual);
         verify(susRepository, times(1)).findByAccountId(ACCOUNT_ID);
         verify(susRepository, times(1)).findByAccountIdAndMsisdn(ACCOUNT_ID, MSISDN);
-        verify(susRepository, times(1)).updateDataEntity(ACCOUNT_ID, successStatus, MSISDN);
+        verify(susRepository, times(1)).createDataEntity(ACCOUNT_ID, STATUS, MSISDN);
         verify(imdbFeignClient, times(1)).enrich(ACCOUNT_ID);
     }
 
@@ -205,40 +204,36 @@ public class SusServiceImplTest {
 
     @Test
     public void updateStatusDataInImdbWithOutMsisdnUpdateFailedTest() {
-        String successStatus = "complete";
         OneOfEnrichResponseErrorResponse body = new OneOfEnrichResponseErrorResponse()
                 .accountId(ACCOUNT_ID)
                 .msisdn(MSISDN);
         Mockito.when(susRepository.findByAccountId(ACCOUNT_ID)).thenReturn(null);
         Mockito.when(imdbFeignClient.enrich(ACCOUNT_ID)).thenReturn(new ResponseEntity<>(body, HttpStatus.OK));
-        Mockito.when(susRepository.updateDataEntity(ACCOUNT_ID, successStatus, MSISDN)).thenReturn(-1);
+        Mockito.when(susRepository.createDataEntity(ACCOUNT_ID, STATUS, MSISDN)).thenReturn(-1);
 
         try {
             service.updateStatus(ACCOUNT_ID, STATUS, null);
         } catch (RuntimeException ex) {
-            assertEquals(ex.getMessage(), "Обновлено -1 записей, хотя должна быть обновлена только одна.");
             verify(susRepository, times(1)).findByAccountId(ACCOUNT_ID);
-            verify(susRepository, times(1)).updateDataEntity(ACCOUNT_ID, successStatus, MSISDN);
+            verify(susRepository, times(1)).createDataEntity(ACCOUNT_ID, STATUS, MSISDN);
             verify(imdbFeignClient, times(1)).enrich(ACCOUNT_ID);
         }
     }
 
     @Test
     public void updateStatusDataInImdbWithMsisdnUpdateFailedTest() {
-        String successStatus = "complete";
         OneOfEnrichResponseErrorResponse body = new OneOfEnrichResponseErrorResponse()
                 .accountId(ACCOUNT_ID)
                 .msisdn(MSISDN);
         Mockito.when(susRepository.findByAccountIdAndMsisdn(ACCOUNT_ID, MSISDN)).thenReturn(null);
         Mockito.when(imdbFeignClient.enrich(ACCOUNT_ID)).thenReturn(new ResponseEntity<>(body, HttpStatus.OK));
-        Mockito.when(susRepository.updateDataEntity(ACCOUNT_ID, successStatus, MSISDN)).thenReturn(-1);
+        Mockito.when(susRepository.createDataEntity(ACCOUNT_ID, STATUS, MSISDN)).thenReturn(-1);
 
         try {
             service.updateStatus(ACCOUNT_ID, STATUS, MSISDN);
         } catch (RuntimeException ex) {
-            assertEquals(ex.getMessage(), "Обновлено -1 записей, хотя должна быть обновлена только одна.");
             verify(susRepository, times(1)).findByAccountIdAndMsisdn(ACCOUNT_ID, MSISDN);
-            verify(susRepository, times(1)).updateDataEntity(ACCOUNT_ID, successStatus, MSISDN);
+            verify(susRepository, times(1)).createDataEntity(ACCOUNT_ID, STATUS, MSISDN);
             verify(imdbFeignClient, times(1)).enrich(ACCOUNT_ID);
         }
     }

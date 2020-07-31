@@ -120,4 +120,13 @@ public class SusRepositoryTest {
             Assert.isTrue(ex instanceof PermissionDeniedDataAccessException, "expected exception");
         }
     }
+
+    @Test
+    public void createDataEntitySuccessTest() {
+        int invocationCount = 1;
+        Mockito.when(jdbcTemplate.update(Mockito.anyString(), (Object[]) Mockito.anyVararg())).thenReturn(invocationCount);
+        int i = susRepository.createDataEntity(ACCOUNT_ID, STATUS, MSISDN);
+        assertEquals(invocationCount, i);
+        verify(jdbcTemplate, times(invocationCount)).update(Mockito.anyString(), (Object[]) Mockito.anyVararg());
+    }
 }

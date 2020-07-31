@@ -1,5 +1,7 @@
 package com.tieto.core.sus.rabbit;
 
+import com.tieto.core.sus.exception.MsisdnNotEqualsException;
+import com.tieto.core.sus.exception.MsisdnNotFoundException;
 import com.tieto.core.sus.messaging.rabbit.SusMessageListener;
 import com.tieto.core.sus.messaging.rabbit.SusMessageSender;
 import com.tieto.core.sus.model.DataEntity;
@@ -52,10 +54,22 @@ public class SusMessageListenerTest {
         MessageEntity messageEntity = new MessageEntity(ACCOUNT_ID, STATUS, MSISDN);
 
         Mockito.when(service.updateStatus(messageEntity.getAccountId(), messageEntity.getStatus(), messageEntity.getMsisdn()))
-                .thenReturn(null);
+                .thenThrow(new MsisdnNotFoundException());
         listener.process(messageEntity);
         verify(service, times(1)).updateStatus(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
         verify(messageSender, times(1)).sendMessage(
                 new RabbitResponse(messageEntity, false, ErrorCode.NUMBER_3, "Данный аккаунт не найден"));
+    }
+
+    @Test
+    public void processNotEqualMsisdnTest() {
+        MessageEntity messageEntity = new MessageEntity(ACCOUNT_ID, STATUS, MSISDN);
+
+        Mockito.when(service.updateStatus(messageEntity.getAccountId(), messageEntity.getStatus(), messageEntity.getMsisdn()))
+                .thenThrow(new MsisdnNotEqualsException("123456", MSISDN));
+        listener.process(messageEntity);
+        verify(service, times(1)).updateStatus(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+        verify(messageSender, times(1)).sendMessage(
+                new RabbitResponse(messageEntity, false, ErrorCode.NUMBER_4, "Переданный msisdn не совпадает"));
     }
 }
