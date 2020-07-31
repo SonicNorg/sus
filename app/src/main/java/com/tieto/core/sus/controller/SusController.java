@@ -36,17 +36,19 @@ public class SusController implements SusApi {
         try {
             service.updateStatus(updateRequest.getAccountId(), updateRequest.getStatus(), updateRequest.getMsisdn());
         } catch (DataAccessException dae) {
+            log.error("Database error", dae);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     new OneOfUpdateResponseErrorResponse()
                             .message("Ошибка доступа к БД")
                             .code(ErrorCode.NUMBER_1));
         } catch (MsisdnNotEqualsException ex) {
+            log.debug("Msisdn not equals! Provided: {}, found: {}", ex.getProvidedMsisdn(), ex.getStoredMsisdn());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new OneOfUpdateResponseErrorResponse()
                             .message("Переданный msisdn не совпадает")
                             .code(ErrorCode.NUMBER_4));
         } catch (MsisdnNotFoundException ex) {
-
+            log.debug("Msisdn {} not found!", updateRequest.getMsisdn());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new OneOfUpdateResponseErrorResponse()
                             .message("Данный аккаунт не найден")
