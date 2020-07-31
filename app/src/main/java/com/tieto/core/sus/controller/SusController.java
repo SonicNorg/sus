@@ -27,24 +27,14 @@ import java.time.Duration;
 @Slf4j
 public class SusController implements SusApi {
     private final SusService service;
-    private final RateLimitConfig config;
-    private final Bucket bucket;
 
     @Autowired
-    public SusController(SusService service, RateLimitConfig config) {
+    public SusController(SusService service) {
         this.service = service;
-        this.config = config;
-        Bandwidth limit = Bandwidth.classic(config.getRateLimitPerSecond(), Refill.greedy(config.getRateLimitPerSecond(), Duration.ofSeconds(1)));
-        this.bucket = Bucket4j.builder()
-                .addLimit(limit)
-                .build();
     }
 
     @Override
     public ResponseEntity<OneOfUpdateResponseErrorResponse> updateStatus(@Valid UpdateRequest updateRequest) {
-        if (!bucket.tryConsume(1)) {
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
-        }
         log.debug("update status iunput params: accountId {}, status {}, msisdn {}",
                 updateRequest.getAccountId(), updateRequest.getStatus(), updateRequest.getMsisdn());
         try {

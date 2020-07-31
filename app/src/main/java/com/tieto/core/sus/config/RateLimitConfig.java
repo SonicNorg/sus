@@ -9,14 +9,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RefreshScope
 public class RateLimitConfig {
-    @Value("${rateLimitPerSecond:10}")
-    private int rateLimitPerSecond;
+    @Value("${rateLimitPerMinute:10}")
+    private int rateLimitPerMinute;
 
-    public int getRateLimitPerSecond() {
-        return rateLimitPerSecond;
+    public int getRateLimitPerMinute() {
+        return rateLimitPerMinute;
     }
 
-    public void setRateLimitPerSecond(int rateLimitPerSecond) {
-        this.rateLimitPerSecond = rateLimitPerSecond;
+    public void setRateLimitPerMinute(int rateLimitPerMinute) {
+        this.rateLimitPerMinute = rateLimitPerMinute;
     }
 }

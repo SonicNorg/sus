@@ -20,13 +20,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class SusControllerTest {
+
     private final SusService service = Mockito.mock(SusService.class);
 
-    private static final RateLimitConfig config = new RateLimitConfig();
-    static {
-        config.setRateLimitPerSecond(10);
-    }
-    private final SusController controller = new SusController(service, config);
+    private final SusController controller = new SusController(service);
 
     private static final String ACCOUNT_ID = "123456";
     private static final String MSISDN = "9993332211";
