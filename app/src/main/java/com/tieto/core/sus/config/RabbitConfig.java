@@ -66,6 +66,30 @@ public class RabbitConfig {
         return BindingBuilder.bind(queueOut).to(exchangeOut).with(routingKeyOut);
     }
 
+    public void setQueueIn(String queueIn) {
+        this.queueIn = queueIn;
+    }
+
+    public void setQueueOut(String queueOut) {
+        this.queueOut = queueOut;
+    }
+
+    public void setExchangeIn(String exchangeIn) {
+        this.exchangeIn = exchangeIn;
+    }
+
+    public void setExchangeOut(String exchangeOut) {
+        this.exchangeOut = exchangeOut;
+    }
+
+    public void setRoutingKeyIn(String routingKeyIn) {
+        this.routingKeyIn = routingKeyIn;
+    }
+
+    public void setRoutingKeyOut(String routingKeyOut) {
+        this.routingKeyOut = routingKeyOut;
+    }
+
     @Bean
     public Jackson2JsonMessageConverter jackson2JsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
@@ -93,29 +117,5 @@ public class RabbitConfig {
 
     public String getRoutingKeyOut() {
         return routingKeyOut;
-    }
-
-    public void setQueueIn(String queueIn) {
-        this.queueIn = queueIn;
-    }
-
-    public void setQueueOut(String queueOut) {
-        this.queueOut = queueOut;
-    }
-
-    public void setExchangeIn(String exchangeIn) {
-        this.exchangeIn = exchangeIn;
-    }
-
-    public void setExchangeOut(String exchangeOut) {
-        this.exchangeOut = exchangeOut;
-    }
-
-    public void setRoutingKeyIn(String routingKeyIn) {
-        this.routingKeyIn = routingKeyIn;
-    }
-
-    public void setRoutingKeyOut(String routingKeyOut) {
-        this.routingKeyOut = routingKeyOut;
     }
 }

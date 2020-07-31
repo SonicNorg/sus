@@ -10,6 +10,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Data
 public class RabbitResponse implements Serializable {
+
     private MessageEntity messageEntity;
     private boolean success;
     private ErrorCode errorCode;

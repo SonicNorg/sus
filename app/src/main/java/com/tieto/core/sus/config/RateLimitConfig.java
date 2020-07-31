@@ -15,4 +15,8 @@ public class RateLimitConfig {
     public int getRateLimitPerSecond() {
         return rateLimitPerSecond;
     }
+
+    public void setRateLimitPerSecond(int rateLimitPerSecond) {
+        this.rateLimitPerSecond = rateLimitPerSecond;
+    }
 }
