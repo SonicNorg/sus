@@ -8,28 +8,32 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@RefreshScope
+@ConfigurationProperties("service.sus.rabbit")
 public class RabbitConfig {
 
-    @Value("${service.sus.rabbit.queueIn:testIn}")
+    @Value("${queueIn:testIn}")
     private String queueIn;
 
-    @Value("${service.sus.rabbit.queueOut:testOut}")
+    @Value("${queueOut:testOut}")
     private String queueOut;
 
-    @Value("${service.sus.rabbit.exchangeIn:testExcIn}")
+    @Value("${exchangeIn:testExcIn}")
     private String exchangeIn;
 
-    @Value("${service.sus.rabbit.exchangeOut:testExcOut}")
+    @Value("${exchangeOut:testExcOut}")
     private String exchangeOut;
 
-    @Value("${service.sus.rabbit.routingKeyIn:testRkIn}")
+    @Value("${routingKeyIn:testRkIn}")
     private String routingKeyIn;
 
-    @Value("${service.sus.rabbit.routingKeyOut:testRkOut}")
+    @Value("${routingKeyOut:testRkOut}")
     private String routingKeyOut;
 
     @Bean
@@ -62,16 +66,33 @@ public class RabbitConfig {
         return BindingBuilder.bind(queueOut).to(exchangeOut).with(routingKeyOut);
     }
 
-    @Bean
-    public Jackson2JsonMessageConverter jackson2JsonMessageConverter() {
-        return new Jackson2JsonMessageConverter();
+    public void setQueueIn(String queueIn) {
+        this.queueIn = queueIn;
+    }
+
+    public void setQueueOut(String queueOut) {
+        this.queueOut = queueOut;
+    }
+
+    public void setExchangeIn(String exchangeIn) {
+        this.exchangeIn = exchangeIn;
+    }
+
+    public void setExchangeOut(String exchangeOut) {
+        this.exchangeOut = exchangeOut;
+    }
+
+    public void setRoutingKeyIn(String routingKeyIn) {
+        this.routingKeyIn = routingKeyIn;
+    }
+
+    public void setRoutingKeyOut(String routingKeyOut) {
+        this.routingKeyOut = routingKeyOut;
     }
 
     @Bean
-    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setMessageConverter(jackson2JsonMessageConverter());
-        return rabbitTemplate;
+    public Jackson2JsonMessageConverter jackson2JsonMessageConverter() {
+        return new Jackson2JsonMessageConverter();
     }
 
     public String getQueueIn() {
