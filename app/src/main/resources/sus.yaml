@@ -36,6 +36,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        429:
+          description: Превышен лимит запросов в секунду
         500:
           description: Внутренняя ошибка
           content:

@@ -13,8 +13,6 @@ import org.springframework.dao.PermissionDeniedDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.tieto.core.sus.service.impl.SusServiceImpl.MSISDN_NOT_EQUALS;
-import static com.tieto.core.sus.service.impl.SusServiceImpl.MSISDN_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.times;
@@ -23,7 +21,7 @@ import static org.mockito.Mockito.verify;
 public class SusControllerTest {
     private final SusService service = Mockito.mock(SusService.class);
 
-    private final SusController controller = new SusController(service);
+    private final SusController controller = new SusController(service, config);
 
     private static final String ACCOUNT_ID = "123456";
     private static final String MSISDN = "9993332211";
