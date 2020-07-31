@@ -5,10 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class MessageEntity {
+public class MessageEntity implements Serializable {
     private String accountId;
     private String status;
     private String msisdn;

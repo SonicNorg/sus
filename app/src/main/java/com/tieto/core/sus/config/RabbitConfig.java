@@ -71,13 +71,6 @@ public class RabbitConfig {
         return new Jackson2JsonMessageConverter();
     }
 
-    @Bean
-    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setMessageConverter(jackson2JsonMessageConverter());
-        return rabbitTemplate;
-    }
-
     public String getQueueIn() {
         return queueIn;
     }
@@ -100,5 +93,29 @@ public class RabbitConfig {
 
     public String getRoutingKeyOut() {
         return routingKeyOut;
+    }
+
+    public void setQueueIn(String queueIn) {
+        this.queueIn = queueIn;
+    }
+
+    public void setQueueOut(String queueOut) {
+        this.queueOut = queueOut;
+    }
+
+    public void setExchangeIn(String exchangeIn) {
+        this.exchangeIn = exchangeIn;
+    }
+
+    public void setExchangeOut(String exchangeOut) {
+        this.exchangeOut = exchangeOut;
+    }
+
+    public void setRoutingKeyIn(String routingKeyIn) {
+        this.routingKeyIn = routingKeyIn;
+    }
+
+    public void setRoutingKeyOut(String routingKeyOut) {
+        this.routingKeyOut = routingKeyOut;
     }
 }
